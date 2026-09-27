@@ -1,6 +1,8 @@
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, Field, field_validator
+from typing import Any, Literal
+from pydantic import BaseModel
 
 class ChatThreadCreate(BaseModel):
     """创建会话请求体类"""
@@ -22,3 +24,13 @@ class ChatThreadResponse(BaseModel):
     title: str
     created_at: datetime
     updated_at: datetime
+
+# 每一条消息对应的模型
+class ChatMessageResponse(BaseModel):
+    role:Literal["user", "assistant"]
+    content:str
+
+# 存储所有消息的模型
+class ChatHistoryResponse(BaseModel):
+    thread_id:UUID
+    messages:list[ChatMessageResponse]
