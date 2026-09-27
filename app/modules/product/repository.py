@@ -38,22 +38,19 @@ class ProductRepository:
             self,
             category: str,
             premium_min: Decimal | None,
-            limit: int,
+            limit_per_category: int,
     ) -> list[Product]:
+        # 1.组装查询条件
         conditions = [
             Product.status == "active",
             Product.category == category,
         ]
-        if premium_min is not None:
+        if premium_min:
             conditions.append(Product.min_premium < premium_min)
+        # 2.准备SQL语句
+        sql = select(Product).where(*conditions).limit(limit_per_category)
+        # 3.执行SQL语句
+        exec_result = await self.session.execute(sql)
+        # 4.解析执行结果
+        return exec_result.scalars().all()
 
-        products = await self.session.scalars(
-            select(Product)
-            .where(*conditions)
-            .order_by(
-                Product.min_premium.asc().nullslast(),
-                Product.id.asc(),
-            )
-            .limit(limit)
-        )
-        return products.all()

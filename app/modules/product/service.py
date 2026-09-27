@@ -26,11 +26,11 @@ class ProductService:
     ) -> list[Product]:
         candidate_products: list[Product] = []
 
-        for category in dict.fromkeys(categories):
+        for category in dict.fromkeys(categories): #dict.fromkeys()给列表去重常用方法
             products = await self.repository.find_limited_by_category(
                 category=category,
                 premium_min=premium_min,
-                limit=limit_per_category,
+                limit_per_category=limit_per_category,
             )
             candidate_products.extend(products)
 
