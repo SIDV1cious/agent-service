@@ -40,7 +40,6 @@ async def lifespan(app:FastAPI):
     # 2.2 执行关闭数据库连接池的方法
     await close_checkpointer()
 
-
 app = FastAPI(
     title=settings.app.name,
     debug=settings.app.debug,

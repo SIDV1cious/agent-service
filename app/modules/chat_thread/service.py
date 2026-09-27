@@ -87,7 +87,7 @@ class ChatThreadService:
             }
         }
         snapshot = await self.agent.aget_state(_config)
-        message_list: list[BaseMessage] = snapshot.values.get("messages")
+        message_list:list[BaseMessage] = snapshot.values.get("messages", [])
         # 2.2 进行对象封装
         # ChatMessageResponse
         messages: list[ChatMessageResponse] = []

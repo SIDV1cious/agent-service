@@ -15,7 +15,7 @@ async def get_service(
 ):
     return ChatService(session, request.app.state.agent)
 
-@router.post("", summary="与AI交互聊天")
+@router.post("", summary="与AI交互聊天", response_class=EventSourceResponse)
 async def chat_stream(
     chat_request:ChatRequest,
     user_id:Annotated[int, Header(alias="x-user-id")],
