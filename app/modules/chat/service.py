@@ -40,6 +40,12 @@ class ChatService:
 
         # 2.4 流式解析：遍历每条消息，再把每条消息的文本片段逐个通过 SSE 推给前端
 
+        response = await self.agent.astream_events(
+            _input,
+            _config,
+            version="v3"
+        )
+
         """
                 Asynchronous per-message streaming object for a single LLM response.
                 The stream itself is awaitable (`msg = await stream`) and async-iterable (`async for event in stream`).
