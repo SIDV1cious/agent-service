@@ -24,9 +24,9 @@ async def init_insurance_advisor(checkpointer: AsyncPostgresSaver):
     # 1.自定义初始化模型
     model = init_chat_model(
         model=settings.llm.chat_model,
-        model_provider="deepseek",
         api_key=settings.llm.api_key,
-        extra_body={"thinking": {"type": "disabled"}},
+        model_provider="deepseek",
+        extra_body={"thinking": {"type": "enabled"}}
     )
     tools = [
         query_candidate_products,

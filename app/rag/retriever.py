@@ -6,6 +6,9 @@ from app.infra.database import AsyncSessionFactory
 from app.rag.models import ParentChunk
 from app.rag.repository import ParentChunkRepository
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 def create_reranker(query: str) -> Function:
     """milvus的reranker function，这里采用ali的重排模型"""
@@ -16,7 +19,7 @@ def create_reranker(query: str) -> Function:
         params={
             "reranker": "model",
             "provider": "ali",
-            "model_name": "gte-rerank-v2",
+            "model_name": "qwen3.7-text-rerank",
             "queries": [query],
             "max_client_batch_size": 5,
         },
@@ -35,6 +38,11 @@ class RagRetriever:
             fetch_k=10,
             expr=f"product_id == {product_id}",
             reranker=create_reranker(query)
+        )
+
+        logger.info(
+            "✅ Milvus Rerank执行成功：model=qwen3.7-text-rerank，返回子块数量=%s",
+            len(children_chunk_list)
         )
 
         # 2.解析父块ID
