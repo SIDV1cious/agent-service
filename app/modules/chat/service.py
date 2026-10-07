@@ -60,8 +60,8 @@ class ChatService:
             Text content — async iterable of `str` deltas, awaitable for full text.
             文本内容 - `str`增量的异步可迭代对象，对于全文能够慢慢等着输出。
             """
-            # 内层：message.text代表一条消息里的文本流，你可以认为进入到一个水管中了，那水管中就会时不时的从上游流水下来，也就是一个个的文本片段。
-            async for text in message.text:
+            # 内层：message.text代表一条消息里的文本流，可以认为进入到一个水管中了，那水管中就会时不时的从上游流水下来，也就是一个个的文本片段。
+            async for text in message.text:   #之所以要用异步遍历，是因为下一项数据（text content）什么时候到，不确定，消息流（message）需要异步等待
                 # 在这儿拿到一个消息片段之后，使用yield，将数据组装成SSE对象放到了一个管道（流）中，往下游流
                 yield ServerSentEvent(event="message", data=text)
         yield ServerSentEvent(event="done", data="END")

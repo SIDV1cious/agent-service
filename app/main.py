@@ -32,6 +32,9 @@ async def lifespan(app:FastAPI):
     from app.agents.insurance_advisor import init_insurance_advisor
     agent = await init_insurance_advisor(checkpointer)
     app.state.agent = agent
+    # 1.6 初始化模块级别的pipeline retriever close_rag - 只需要导入就会自动的初始化
+    from app.rag import close_rag
+
     yield
     # 2.项目关闭的时候执行的一些代码逻辑
     # 2.1 执行数据库连接的关闭操作
@@ -39,6 +42,8 @@ async def lifespan(app:FastAPI):
     logger.info("数据库连接关闭完成~")
     # 2.2 执行关闭数据库连接池的方法
     await close_checkpointer()
+    # 2.3 关闭RAG资源
+    close_rag()
 
 app = FastAPI(
     title=settings.app.name,

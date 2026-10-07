@@ -9,6 +9,7 @@ from app.modules.product.service import ProductService
 
 from app.core.logging import get_logger
 
+
 logger = get_logger(__name__)
 
 @tool
@@ -37,3 +38,39 @@ async def query_candidate_products(
         )
         # 3.返回给AI，最好把Product处理成json返回
         return jsonable_encoder(products)
+
+@tool
+async def query_product_clause(
+        query:str,
+        k:int,
+        product_id:int
+):
+    """
+    查询指定保险产品的条款内容。
+    Args:
+        query: 需要从保险条款中查询的问题。
+        product_id: 保险产品ID
+        k:最终需要的条款数量
+    """
+    logger.info("保险条款查询的工具已经被调用了~")
+    # 1.导入检索器 - 不会重新创建retriever
+    from app.rag.models import ParentChunk
+    from app.rag import retriever
+    # 2.执行检索
+    parent_chunk_list:list[ParentChunk] = await retriever.retriever(
+        query=query,
+        k=k,
+        product_id=product_id
+    )
+    # 3.将父块组装成字符串，返回给大模型
+    response_str = ""
+    for parent_chunk in parent_chunk_list:
+        # 3.1 先组装标题行
+        header_row = ""
+        for section in parent_chunk.section_path:
+            header_row += section + "\n"
+        # 3.2 再组装父块的正文文本
+        response_str += header_row + parent_chunk.content
+
+    # 4.在for循环外面返回大模型
+    return response_str
