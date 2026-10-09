@@ -28,9 +28,14 @@ async def lifespan(app:FastAPI):
     from app.infra.checkpointer import init_checkpointer, close_checkpointer
     # 1.4 执行初始化操作
     checkpointer = await init_checkpointer()
-    # 1.5 创建全局保险顾问智能体
-    from app.agents.insurance_advisor import init_insurance_advisor
-    agent = await init_insurance_advisor(checkpointer)
+    # # 1.5 创建全局保险顾问智能体
+    # 1.5 创建保险顾问智能体
+    # from app.agents.insurance_advisor import init_insurance_agent
+    # agent = await init_insurance_agent(checkpointer)
+    # app.state.agent = agent
+    # 优化:使用完整的主图，代替原来的智能体
+    from app.agents.orchestrator import init_insurance_agent
+    agent = init_insurance_agent(checkpointer)
     app.state.agent = agent
     # 1.6 初始化模块级别的pipeline retriever close_rag - 只需要导入就会自动的初始化
     from app.rag import close_rag

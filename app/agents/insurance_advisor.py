@@ -18,7 +18,7 @@ SYSTEM_PROMPT = """
 """
 
 
-async def init_insurance_advisor(checkpointer: AsyncPostgresSaver):
+def init_insurance_advisor():
     """初始化保险顾问Agent"""
 
     # 1.自定义初始化模型
@@ -37,7 +37,7 @@ async def init_insurance_advisor(checkpointer: AsyncPostgresSaver):
         model=model,
         tools=tools,
         system_prompt=SYSTEM_PROMPT,
-        checkpointer=checkpointer,
+        checkpointer=True,
     )
     logger.info("保险顾问Agent初始化成功~✅️")
     return agent
